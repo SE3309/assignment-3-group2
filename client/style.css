@@ -1,0 +1,17 @@
+header {
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    background-image: linear-gradient(to bottom right, lightcyan, aliceblue);
+    border: 2px, solid, lightblue;
+    border-radius: 10px;
+    padding-left: 20px;
+}
+
+.createsheet {
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    border: 1px, solid, lightblue;
+    border-radius: 10px;
+    padding-left: 20px;
+    padding-bottom: 20px;
+    margin-top: 10px;
+    width: 50%;
+}
