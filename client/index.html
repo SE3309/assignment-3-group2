@@ -3,7 +3,6 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script defer src="lab3.js"></script>
     <title>SE 3316 - Lab 3</title>
     <link rel="stylesheet" href="style.css">
   </head>
@@ -14,10 +13,19 @@
     <section class="createsheet">
     <h2>Create Sign-Up Sheet</h2>
     <div class="row">
-      <label>Title <input type="text", id="classtitle", placeholder="Web Technologies"><br></label>
-      <label>Code <input type="text", id="classcode", placeholder="SE3316A"><br></label>
-      <button class="createclass">Create</button>
+      <label>Title <input type="text", id="coursetitle", placeholder="Web Technologies"><br></label>
+      <label>Code <input type="text", id="coursecode", placeholder="SE3316A"><br></label>
+      <button id="createcourse">Create</button>
+    </div>
+    </section>
+
+    <section class="editsheet">
+    <h2>Edit Sheet</h2>
+    <div class="row">
+      <label>Select Course <select id="courselist"></label>
+      <!-- This dropdown and the rest of course info will be filled dynamically -->
     </div>
     </section>
   </body>
+  <script defer src="lab3.js"></script>
 </html>
