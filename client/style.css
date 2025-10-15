@@ -15,3 +15,9 @@ header {
     margin-top: 10px;
     width: 50%;
 }
+
+#createcourse, #coursetitle, #coursecode, #courselist, #courseedit {
+    border: 2px, solid, lightblue;
+    background-image: linear-gradient(to bottom right, lightcyan, aliceblue);
+    border-radius: 10px;
+}

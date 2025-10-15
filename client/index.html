@@ -10,7 +10,7 @@
     <header>
       <h1>Sign-Up Sheets</h1>
     </header>
-    <section class="createsheet">
+    <section class="createsheet" id="createsheet">
     <h2>Create Sign-Up Sheet</h2>
     <div class="row">
       <label>Title <input type="text", id="coursetitle", placeholder="Web Technologies"><br></label>
@@ -19,11 +19,12 @@
     </div>
     </section>
 
-    <section class="editsheet">
+    <section class="editsheet" id="editsheet">
     <h2>Edit Sheet</h2>
     <div class="row">
-      <label>Select Course <select id="courselist"></label>
+      <label>Select Course <select id="courselist"></select></label>
       <!-- This dropdown and the rest of course info will be filled dynamically -->
+      <button id="courseedit", hidden="true">Edit</button>
     </div>
     </section>
   </body>
