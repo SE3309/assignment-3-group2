@@ -13,10 +13,11 @@ header {
     padding-left: 20px;
     padding-bottom: 20px;
     margin-top: 10px;
-    width: 50%;
+    width: 60%;
 }
 
-#createcourse, #coursetitle, #coursecode, #courselist, #courseedit {
+#createcourse, #coursetitle, #coursecode, #coursesection, #courselist, #courseedit, #saveedit, #deletecourse,
+#editcoursetitle, #editcoursecode, #editcoursesection {
     border: 2px, solid, lightblue;
     background-image: linear-gradient(to bottom right, lightcyan, aliceblue);
     border-radius: 10px;
