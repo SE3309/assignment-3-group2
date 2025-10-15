@@ -8,33 +8,41 @@
   </head>
   <body>
     <header>
-      <h1>Sign-Up Sheets</h1>
+      <h1>Course Management System</h1>
     </header>
-    <section class="createsheet" id="createsheet">
-    <h2>Create Sign-Up Sheet</h2>
+    <!-- COURSE SECTION -->
+    <section class="createcourse" id="createcourse">
+    <h2>Create Course</h2>
     <div class="row">
       <label>Title <input type="text", id="coursetitle", placeholder="Web Technologies"><br></label>
       <label>Code <input type="text", id="coursecode", placeholder="SE3316A"><br></label>
       <label>Section <input type="text", id="coursesection", placeholder="1"><br></label>
-      <button id="createcourse">Create</button>
+      <button id="createcoursebutton">Create</button>
     </div>
     </section>
 
-    <section class="editsheet" id="editsheet">
-    <h2>Edit Sheet</h2>
+    <section class="editcourse" id="editcourse">
+    <h2>Edit Course</h2>
     <div class="row">
       <label>Select Course <select id="courselist"></select></label>
-      <!-- This dropdown and the rest of course info will be filled dynamically -->
       <button id="courseedit", hidden="true">Edit</button>
     </div>
     </section>
 
     <section class="addmembers" id="addmembers">
-    <h2>Add Members to Course</h2>
+    <h2>Add/Remove Members to Course</h2>
     <div class="row">
       <label>Select Course <select id="courselistmember"></select></label>
-      <!-- This dropdown and the rest of course info will be filled dynamically -->
-      <button id="addmember", hidden="true">Add</button>
+    </div>
+    </section>
+    <!-- SHEET SECTION -->
+    <section class="createsheet" id="createsheet">
+    <h2>Create Sign-Up Sheet</h2>
+    <div class="row">
+      <label>Assignment Name <input id="sheetname"></select></label><br>
+      <label>Course Code <select id="sheetcoursecode"></select></label><br>
+      <label>Course Section <select id="sheetcoursesection"></select></label><br>
+      <label>Course Code <select id="sheetcoursecode"></select></label>
     </div>
     </section>
   </body>
