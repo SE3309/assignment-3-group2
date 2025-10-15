@@ -6,7 +6,7 @@ header {
     padding-left: 20px;
 }
 
-.createsheet, .editsheet {
+.createsheet, .editsheet, .addmembers {
     * { box-sizing: border-box; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
     border: 1px, solid, lightblue;
     border-radius: 10px;
@@ -17,7 +17,7 @@ header {
 }
 
 #createcourse, #coursetitle, #coursecode, #coursesection, #courselist, #courseedit, #saveedit, #deletecourse,
-#editcoursetitle, #editcoursecode, #editcoursesection {
+#editcoursetitle, #editcoursecode, #editcoursesection, #courselistmember {
     border: 2px, solid, lightblue;
     background-image: linear-gradient(to bottom right, lightcyan, aliceblue);
     border-radius: 10px;

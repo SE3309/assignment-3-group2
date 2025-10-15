@@ -67,6 +67,30 @@ app.put('/api/courses/:courseTitle/:courseCode/:courseSection', (req, res) => {
     }
 })
 
+app.delete('/api/courses/:courseTitle/:courseCode/:courseSection', (req, res) => {
+    try {
+        const title = decodeURIComponent(req.params.courseTitle);
+        const code = decodeURIComponent(req.params.courseCode);
+        const section = decodeURIComponent(req.params.courseSection);
+
+        const courses = JSON.parse(fs.readFileSync(courseFile, 'utf-8') || '[]');
+
+        const index = courses.findIndex(c =>
+            c.courseTitle === title &&
+            c.courseCode === code &&
+            c.courseSection === section
+        );
+
+        if (index === -1) return res.status(404).json({ message: "Course not found "});
+        courses.splice(index, 1);
+        fs.writeFileSync(courseFile, JSON.stringify(courses, null, 2));
+        return res.status(204).send();
+    } catch (err) {
+        console.log("Error (Deleting Course): " + err);
+        return res.status(500).json({ message: "Failed to delete Course"});
+    }
+})
+
 app.use('/', express.static('client'));
 
 app.use('/', (req, res) => {

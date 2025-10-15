@@ -1,5 +1,6 @@
 const createCourse = document.getElementById('createcourse');
 const courseList = document.getElementById('courselist');
+const addMembersCourseList = document.getElementById('courselistmember');
 const editCourse = document.getElementById('courseedit');
 const editSheet = document.getElementById('editsheet');
 const deleteCourse = document.getElementById('deletecourse');
@@ -51,15 +52,22 @@ async function fetchCourses() {
         courseList.innerHTML = "";
 
         // Adding an empty slot so no course default selects.
-        const blank = document.createElement('option');
-        blank.textContent = "";
-        courseList.appendChild(blank);
+        courseList.appendChild(document.createElement('option'));
 
         courses.forEach(course => {
             const option = document.createElement('option');
             option.textContent = course.courseTitle;
             courseList.appendChild(option);
         });
+
+        addMembersCourseList.appendChild(document.createElement('option'));
+
+        courses.forEach(course => {
+            const option = document.createElement('option');
+            option.textContent = course.courseTitle;
+            addMembersCourseList.appendChild(option);
+        });
+
     } catch (err) {
         console.log("Error (Loading Courses in Dropdown): " + err);
     }
@@ -107,6 +115,7 @@ async function editSelected() {
         del.id = "deletecourse";
         del.textContent = "Delete";
         del.hidden = false;
+        del.addEventListener('click', deleteEditedCourse);
 
     panel.append(courseTit, courseCo, courseSec, br, save, del);
     editSheet.appendChild(panel);
@@ -135,6 +144,28 @@ async function saveCourseEdit() {
 
     document.getElementById('editPanel').remove();
     await fetchCourses();
+}
+
+async function deleteEditedCourse() {
+    try {
+        const resList = await fetch('/api/courses');
+        const courses = await resList.json();
+        
+        const course = courses.find(c => c.courseTitle === courseList.value);
+
+        const res = await fetch(`/api/courses/${encodeURIComponent(course.courseTitle)}/${encodeURIComponent(course.courseCode)}/${encodeURIComponent(course.courseSection)}`, {
+            method: 'DELETE',
+        });
+
+        if (res.status == 204) {
+            const panel = document.getElementById('editPanel');
+            if (panel) { panel.remove(); }
+            await fetchCourses();
+        }
+    } catch (err) {
+        console.log("Error (Deleting Course): " + err);
+        alert("Couldn't Delete Course.");
+    }
 }
 
 fetchCourses();
