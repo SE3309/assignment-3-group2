@@ -315,6 +315,7 @@ async function addSheets() {
         section: sect.value,
         startDate: start.value,
         endDate: end.value,
+        slots: [],
     };
 
     if (assnName.value == "" || sect.value == "" || start.value == "" || end.value == "") return alert('All fields must be filled');
@@ -340,8 +341,87 @@ async function addSheets() {
     restOfForm.hidden = true;
 }
 
-function selectSheet() {
+async function selectSheet() {
     deleteSheetButton.hidden = (editSheet.value === "");
+
+    const oldPanel = document.getElementById('sheetspanel');
+    if (oldPanel) oldPanel.remove();
+
+    if (editSheet.value === "") return;
+
+    const resList = await fetch('/api/sheets');
+    const sheets = await resList.json();
+    const sheet = sheets.find(s => s.assignmentName === editSheet.value);
+    const panel = document.createElement('div');
+        panel.id = 'sheetspanel';
+
+    const currentSheetLabel = document.createElement('h3');
+    currentSheetLabel.id = "currentsheetlabel";
+    currentSheetLabel.textContent = "Current Sheets:";
+    const sheetList = document.createElement('ol');
+        sheetList.id = "sheetsList";
+    const sheetListName = document.createElement('li');
+        sheetListName.id = "s." + sheet.id;
+        sheetListName.textContent = "Assignment Name: " + sheet.assignmentName;
+    const sheetListCode = document.createElement('li');
+        sheetListCode.id = "s." + sheet.courseCode;
+        sheetListCode.textContent = "Course Code: " + sheet.courseCode;
+    const sheetListSection = document.createElement('li');
+        sheetListSection.id = "s." + sheet.section;
+        sheetListSection.textContent = "Section: " + sheet.section;
+    const sheetListStart = document.createElement('li');
+        sheetListStart.id = "s." + sheet.startDate;
+        sheetListStart.textContent = "Start Date: " + sheet.startDate;
+    const sheetListEnd = document.createElement('li');
+        sheetListEnd.id = "s." + sheet.endDate;
+        sheetListEnd.textContent = "End Date: " + sheet.endDate;
+
+    const addSlot = document.createElement('section');
+        addSlot.className = 'addslot';
+        addSlot.id = 'addslot';
+    const addSlotHeader = document.createElement('h3');
+        addSlotHeader.id = 'addslotheader';
+        addSlotHeader.textContent = 'Add Slot to Sheet';
+    const addSlotStart = document.createElement('input');
+        addSlotStart.type = 'date';
+        addSlotStart.id = 'addslotstart';
+    const addSlotLabel = document.createElement('label');
+        addSlotLabel.id = 'addslotlabel';
+        addSlotLabel.textContent = 'Start Date: '
+        addSlotLabel.appendChild(addSlotStart);
+    const slotDuration = document.createElement('input');
+        slotDuration.id = 'slotduration';
+        slotDuration.placeholder = '1-240';
+    const slotDurationLabel = document.createElement('label');
+        slotDurationLabel.id = 'slotdurationlabel';
+        slotDurationLabel.textContent = 'Slot Duration: '
+        slotDurationLabel.appendChild(slotDuration);
+    const slotNumber = document.createElement('input');
+        slotNumber.id = 'slotnumber';
+        slotNumber.placeholder = '1-99';
+    const slotNumberLabel = document.createElement('label');
+        slotNumberLabel.id = 'slotnumberlabel';
+        slotNumberLabel.textContent = 'Slot Number: '
+        slotNumberLabel.appendChild(slotNumber);
+    const maxMembers = document.createElement('input');
+        maxMembers.id = 'maxmembers';
+        maxMembers.placeholder = '1-99';
+    const maxMembersLabel = document.createElement('label');
+        maxMembersLabel.id = 'slotnumberlabel';
+        maxMembersLabel.textContent = 'Max Members: '
+        maxMembersLabel.appendChild(maxMembers);
+    const createSlotButton = document.createElement('button');
+        createSlotButton.id = 'createslotbutton';
+        createSlotButton.textContent = 'Create Slot'
+        createSlotButton.addEventListener('click', createSheetSlot);
+    
+    addSlot.append(addSlotHeader, addSlotLabel, document.createElement('br'), slotDurationLabel, document.createElement('br'),
+                   slotNumberLabel, document.createElement('br'), maxMembersLabel, document.createElement('br'), createSlotButton);
+
+    sheetList.append(sheetListName, sheetListCode, sheetListSection, sheetListStart, sheetListEnd);
+    panel.append(currentSheetLabel, sheetList, document.createElement('br'), addSlot, document.createElement('br'));
+
+    editSheets.appendChild(panel);
 }
 
 async function deleteSheet() {
@@ -354,6 +434,48 @@ async function deleteSheet() {
     });
     deleteSheetButton.hidden = true;
     await fetchSheets();
+}
+
+async function createSheetSlot() {
+    const startDate = document.getElementById('addslotstart').value;
+    const slotDur = document.getElementById('slotduration').value;
+    const slotNumber = document.getElementById('slotnumber').value;
+    const maxMem = document.getElementById('maxmembers').value;
+
+    if (parseInt(slotDur) > 240 || parseInt(slotDur) < 1 ||
+        parseInt(slotNumber) > 99 || parseInt(slotNumber) < 1 ||
+        parseInt(maxMem) > 99 || parseInt(maxMem) < 1) {
+            alert('Please make sure you are following the correct criteria.');
+            return;
+        }
+
+    const slot = {
+        start: startDate,
+        slotDuration: slotDur,
+        numSlot: slotNumber,
+        maxMembers: maxMem,
+    }
+
+    const resList = await fetch(`/api/sheets`);
+    const sheets = await resList.json();
+
+    const currentSheet = sheets.find(s => s.assignmentName === editSheet.value);
+    const sheetID = currentSheet.id;
+
+    const res = await fetch(`/api/sheets/${encodeURIComponent(sheetID)}/slots`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(slot)
+    });
+
+    if (!res.ok) {
+        const text = await res.text();
+        console.log('[Create Slot] failed', res.status, text);
+    }
+
+    const oldPanel = document.getElementById('sheetspanel');
+    if (oldPanel) oldPanel.remove();
+    fetchSheets();
 }
 
 fetchCourses();

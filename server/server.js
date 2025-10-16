@@ -18,6 +18,10 @@ function sheetId() {
   return `sheet_${Date.now()}_${Math.random().toString(16).slice(2,5)}`;
 }
 
+function slotId() {
+  return `slot${Date.now()}_${Math.random().toString(16).slice(2,5)}`;
+}
+
 /* All below belong to the Course API. */
 // Creates Course
 app.post('/api/courses', (req, res) => {
@@ -211,6 +215,25 @@ app.get('/api/sheets', (req, res) => {
     } catch (err) {
         console.log("Error (Retrieving Sheets): " + err);
         return res.status(500).json({ message: "Failed to load Sheets" });
+    }
+});
+
+// Create Slot
+app.post('/api/sheets/:id/slots', (req, res) => {
+    try {
+        const id = req.params.id;
+        const newSlot = req.body;
+            newSlot.id = slotId();  
+        const fileData = fs.readFileSync(sheetsFile, 'utf-8');
+        const sheets = JSON.parse(fileData || '[]');
+        const sheet = sheets.find(s => s.id === id);
+        sheet.slots.push(newSlot);
+
+        fs.writeFileSync(sheetsFile, JSON.stringify(sheets, null, 2), 'utf-8');
+        return res.status(201).json({ message: "Slot added Successfully" });
+    } catch (err) {
+        console.log("Error (Create Slot): " + err);
+        res.status(500).json({ message: "Failed to add Slot" });
     }
 });
 
