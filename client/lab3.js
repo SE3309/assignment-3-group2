@@ -4,12 +4,16 @@ const addMembersCourseList = document.getElementById('courselistmember');
 const memberSheet = document.getElementById('addmembers');
 const editCourse = document.getElementById('courseedit');
 const editcourse = document.getElementById('editcourse');
-
+const addSheet = document.getElementById('addsheet');
+const courseCodeSelect = document.getElementById('sheetcoursecode');
+const editSheet = document.getElementById('editsheetname');
+const editSheets = document.getElementById('editsheet');
+const deleteSheetButton = document.getElementById('deletesheetbutton');
 let cTitle = document.getElementById('coursetitle');
 let cCode = document.getElementById('coursecode');
 let cSection = document.getElementById('coursesection');
 
-
+// COURSE MANAGEMENT
 function addCourse() {
     const codeRegex = /^(?:[1-9]|[1-9][0-9]|[1-9][0-9]{2}|[1-9][0-9]{3})$/;
     const titleRegex = /^.{0,100}$/;
@@ -55,17 +59,24 @@ async function fetchCourses() {
 
         courseList.appendChild(document.createElement('option'));
         addMembersCourseList.appendChild(document.createElement('option'));
+        courseCodeSelect.appendChild(document.createElement('option'));
 
         courses.forEach(course => {
             const options = () => {
                 const option = document.createElement('option');
-                option.textContent = course.courseTitle;
+                    option.textContent = course.courseTitle;
                 return option;
+            }
+
+            const codes = () => {
+                const option2 = document.createElement('option');
+                    option2.textContent = course.courseCode;
+                return option2;
             }
             courseList.appendChild(options());
             addMembersCourseList.appendChild(options());
+            courseCodeSelect.appendChild(codes());
         });
-
     } catch (err) {
         console.log("Error (Loading Courses in Dropdown): " + err);
     }
@@ -264,9 +275,95 @@ async function onRemoveMember() {
     await fetchCourses();
 }
 
+// SHEET MANAGEMENT
+async function fetchSheets() {
+    try {
+        const res = await fetch('/api/sheets');
+        const sheets = await res.json();
+        editSheet.innerHTML = "";
+        editSheet.appendChild(document.createElement('option'));
+
+        sheets.forEach(s => {
+            const options = () => {
+                const option = document.createElement('option');
+                    option.textContent = s.assignmentName;
+                    return option;
+            }
+            editSheet.appendChild(options());
+        })
+    } catch (err) {
+        console.log("Error (Loading Sheets): " + err);
+    }
+}
+function addSheetsMenu() {
+    const restOfForm = document.getElementById('aftercode');
+    if (courseCodeSelect.value != "") { restOfForm.hidden = false; } 
+    else { restOfForm.hidden = true; }
+}
+
+async function addSheets() {
+    const assnName = document.getElementById('sheetname');
+    const restOfForm = document.getElementById('aftercode');
+    const sect = document.getElementById('sheetcoursesection');
+    const start = document.getElementById('sheetstartdate');
+    const end = document.getElementById('sheetenddate');
+
+
+    const sheet = {
+        assignmentName: assnName.value,
+        courseCode: courseCodeSelect.value,
+        section: sect.value,
+        startDate: start.value,
+        endDate: end.value,
+    };
+
+    if (assnName.value == "" || sect.value == "" || start.value == "" || end.value == "") return alert('All fields must be filled');
+
+    const res = await fetch('/api/sheets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sheet),
+    });
+
+    if (!res.ok) {
+        const text = await res.text();
+        console.log('[AddMember] failed', res.status, text);
+    }
+
+    [assnName, courseCodeSelect, sect, start, end].forEach(option => {
+        option.value = "";
+    });
+
+    courseCodeSelect.innerHTML = "";
+    await fetchCourses();
+    await fetchSheets();
+    restOfForm.hidden = true;
+}
+
+function selectSheet() {
+    deleteSheetButton.hidden = (editSheet.value === "");
+}
+
+async function deleteSheet() {
+    const resList = await fetch('/api/sheets');
+    const sheets = await resList.json();
+    const sheet = sheets.find(s => s.assignmentName === editSheet.value);
+
+    const res = await fetch(`/api/sheets/${encodeURIComponent(sheet.id)}`, {
+        method: 'DELETE'
+    });
+    deleteSheetButton.hidden = true;
+    await fetchSheets();
+}
+
 fetchCourses();
+fetchSheets();
 
 createCourse.addEventListener('click', addCourse);
 courseList.addEventListener('change', selectCourse);
 editCourse.addEventListener('click', editSelected);
 addMembersCourseList.addEventListener('change', addMemberMenu);
+courseCodeSelect.addEventListener('change', addSheetsMenu);
+addSheet.addEventListener('click', addSheets);
+editSheet.addEventListener('change', selectSheet);
+deleteSheetButton.addEventListener('click', deleteSheet);

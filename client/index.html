@@ -19,6 +19,12 @@
       <label>Section <input type="text", id="coursesection", placeholder="1"><br></label>
       <button id="createcoursebutton">Create</button>
     </div>
+      <section class="addmembers" id="addmembers">
+      <h2>Add/Remove Members to Course</h2>
+      <div class="row">
+        <label>Select Course <select id="courselistmember"></select></label>
+      </div>
+      </section>
     </section>
 
     <section class="editcourse" id="editcourse">
@@ -28,21 +34,26 @@
       <button id="courseedit", hidden="true">Edit</button>
     </div>
     </section>
-
-    <section class="addmembers" id="addmembers">
-    <h2>Add/Remove Members to Course</h2>
-    <div class="row">
-      <label>Select Course <select id="courselistmember"></select></label>
-    </div>
-    </section>
     <!-- SHEET SECTION -->
     <section class="createsheet" id="createsheet">
     <h2>Create Sign-Up Sheet</h2>
     <div class="row">
       <label>Assignment Name <input id="sheetname"></select></label><br>
       <label>Course Code <select id="sheetcoursecode"></select></label><br>
-      <label>Course Section <select id="sheetcoursesection"></select></label><br>
-      <label>Course Code <select id="sheetcoursecode"></select></label>
+      <div id="aftercode" hidden="true">
+        <label>Course Section <input id="sheetcoursesection"></select></label><br>
+        <label>Start Date <input type="date" id="sheetstartdate"></input></label><br>
+        <label>End Date <input type="date" id="sheetenddate"></input></label><br>
+        <button id="addsheet">Add</button>
+      </div>
+    </div>
+    </section>
+
+    <section class="editsheet" id="editsheet">
+    <h2>Edit Sign-Up Sheet</h2>
+    <div class="row">
+      <label>Choose Sheet <select id="editsheetname"></select></label>
+      <button id="deletesheetbutton" hidden="true">Delete</button>
     </div>
     </section>
   </body>

@@ -7,14 +7,19 @@ const port = 3000;
 app.use(express.json());
 
 const courseFile = path.join(__dirname, 'data', 'courseInfo.json');
-const sheets = path.join(__dirname, 'data', 'sheets.json');
+const sheetsFile = path.join(__dirname, 'data', 'sheets.json');
 
 // Generates unique IDs so that I don't have to try syphoning through each course and sift to see if something is unique or not.
 function genId() {
   return `m_${Date.now()}_${Math.random().toString(16).slice(2,5)}`;
 }
 
-// All below belong to the Course API.
+function sheetId() {
+  return `sheet_${Date.now()}_${Math.random().toString(16).slice(2,5)}`;
+}
+
+/* All below belong to the Course API. */
+// Creates Course
 app.post('/api/courses', (req, res) => {
     res.status(201).json({ ok: true });
     const newCourse = req.body;
@@ -34,6 +39,7 @@ app.post('/api/courses', (req, res) => {
     }
 });
 
+// Creates Member
 app.post('/api/courses/:courseTitle/:courseCode/:courseSection/members', (req, res) => {
     try {
         const title = decodeURIComponent(req.params.courseTitle);
@@ -63,6 +69,7 @@ app.post('/api/courses/:courseTitle/:courseCode/:courseSection/members', (req, r
     }
 });
 
+// Deletes Member
 app.delete('/api/courses/:courseTitle/:courseCode/:courseSection/members/:id', (req, res) => {
     try {
         const title = decodeURIComponent(req.params.courseTitle);
@@ -90,6 +97,7 @@ app.delete('/api/courses/:courseTitle/:courseCode/:courseSection/members/:id', (
     }
 });
 
+// Retrieves Courses
 app.get('/api/courses', (req, res) => {
     try {
         const fileData = fs.readFileSync(courseFile, 'utf-8');
@@ -97,10 +105,11 @@ app.get('/api/courses', (req, res) => {
         return res.json(courses);
     } catch (err) {
         console.log("Error (Retrieving Courses): " + err);
-        return res.status(500).json({ message: "Failed to load Courses"});
+        return res.status(500).json({ message: "Failed to load Courses" });
     }
 });
 
+// Updates Course Information
 app.put('/api/courses/:courseTitle/:courseCode/:courseSection', (req, res) => {
     try {
         const title = decodeURIComponent(req.params.courseTitle);
@@ -132,6 +141,7 @@ app.put('/api/courses/:courseTitle/:courseCode/:courseSection', (req, res) => {
     }
 })
 
+// Deletes Course
 app.delete('/api/courses/:courseTitle/:courseCode/:courseSection', (req, res) => {
     try {
         const title = decodeURIComponent(req.params.courseTitle);
@@ -156,7 +166,53 @@ app.delete('/api/courses/:courseTitle/:courseCode/:courseSection', (req, res) =>
     }
 });
 
-// All below use the Sheets API.
+/* All below use the Sheets API. */
+// Creates Sign-Up Sheet
+app.post('/api/sheets', (req, res) => {
+    try {
+        const newSheet = req.body;
+            newSheet.id = sheetId();
+        const fileData = fs.readFileSync(sheetsFile, 'utf-8');
+        const sheets = JSON.parse(fileData || '[]');
+        sheets.push(newSheet);
+
+
+        fs.writeFileSync(sheetsFile, JSON.stringify(sheets, null, 2), 'utf-8');
+        return res.status(201).json({ message: "New Sheet Added" });
+    } catch (err) {
+        console.log("Error (Create Sheet): " + err);
+        return res.status(500).json({ message: "Failed to add Sheet" });
+    }
+});
+
+// Deletes Sign-Up Sheet
+app.delete('/api/sheets/:id', (req, res) => {
+    try {
+        const id = decodeURIComponent(req.params.id);
+        const sheets = JSON.parse(fs.readFileSync(sheetsFile, 'utf-8') || '[]');
+        const index = sheets.findIndex(s => s.id === id);
+        
+        if (index === -1) return res.status(404).json({ message: "Sheet not found "});
+        sheets.splice(index, 1);
+        fs.writeFileSync(sheetsFile, JSON.stringify(sheets, null, 2), 'utf-8');
+        return res.status(204).send();
+    } catch (err) {
+        console.log("Error (Delete Sheet): " + err);
+        return res.status(500).json({ message: "Failed to Delete Sheet" });
+    }
+});
+
+// Retrieves Sheets
+app.get('/api/sheets', (req, res) => {
+    try {
+        const fileData = fs.readFileSync(sheetsFile, 'utf-8');
+        const sheets = JSON.parse(fileData);
+        return res.json(sheets);
+    } catch (err) {
+        console.log("Error (Retrieving Sheets): " + err);
+        return res.status(500).json({ message: "Failed to load Sheets" });
+    }
+});
 
 app.use('/', express.static('client'));
 
