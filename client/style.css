@@ -21,3 +21,33 @@ button, input, select {
     background-image: linear-gradient(to bottom right, lightcyan, aliceblue);
     border-radius: 10px;
 }
+
+#gradecomment {
+    width: 100%;
+    box-sizing: border-box;
+    height: 6rem;      
+    max-height: 10rem;    
+    padding: 0.5rem;
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.3;
+    resize: vertical;      
+    overflow-y: auto;      
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+section.grading .row { 
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+#slotmembersout, #gradeout {
+    max-height: 12rem;
+    overflow: auto;
+    padding: 0.5rem;
+    border: 1px solid #eee;
+    background: #fafafa;
+    white-space: pre-wrap;
+}

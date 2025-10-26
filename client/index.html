@@ -56,6 +56,51 @@
       <button id="deletesheetbutton" hidden="true">Delete</button>
     </div>
     </section>
+
+    <section class="editslot" id="editslot">
+    <h2>Modify Slots</h2>
+    <div class="row">
+      <label>Choose Slot <select id="editslotname"></select></label>
+      <button id="deleteslotbutton" hidden="true">Delete</button>
+    </div>
+    </section>
+
+    <section class="signup" id="signup">
+      <h2>Sign Up / Cancel Sign-up</h2>
+      <div class="row">
+        <label>Choose Sheet <select id="signupsheet"></select></label><br>
+        <label>Slot Number <select id="signupslotnumber"></select></label><br>
+        <label>Member ID <select id="signupmemberid"></select></label><br>
+        <button id="signupbutton">Sign Up</button>
+      </div>
+
+      <div class="row" style="margin-top:1rem;">
+        <label>Choose Sheet <select id="cancelsignupsheet"></select></label><br>
+        <label>Member ID <select id="cancelsignupmemberid"></select></label><br>
+        <button id="cancelsignupbutton">Cancel Sign-up</button>
+      </div>
+    </section>
+
+    <section class="slotmembers" id="slotmembers">
+      <h2>Get Slot Members</h2>
+      <div class="row">
+        <label>Slot ID <select id="slotidinput"></select></label>
+        <button id="getslotmembers">Get Members</button>
+      </div>
+      <pre id="slotmembersout" style="white-space:pre-wrap;"></pre>
+    </section>
+
+    <section class="grading" id="grading">
+      <h2>Grade / Comment</h2>
+      <div class="row">
+        <label>Choose Sheet <select id="gradesheet"></select></label><br>
+        <label>Member <select id="grademember"></select></label><br>
+        <label>Grade <input id="gradevalue" type="number" min="0" max="99" placeholder="0-99"></label><br>
+        <label>Comment <textarea id="gradecomment" maxlength="500" placeholder="Max 500 chars"></textarea></label><br>
+        <button id="submitgrade">Submit Grade</button>
+      </div>
+      <pre id="gradeout" style="white-space:pre-wrap;"></pre>
+    </section>
   </body>
   <script defer src="lab3.js"></script>
 </html>
