@@ -25,21 +25,35 @@ function slotId() {
 /* All below belong to the Course API. */
 // Creates Course
 app.post('/api/courses', (req, res) => {
-    res.status(201).json({ ok: true });
-    const newCourse = req.body;
-
     try {
-        let courses = [];
-        const fileData = fs.readFileSync(courseFile, 'utf-8');
-        courses = JSON.parse(fileData || '[]');
+        const { courseTitle, courseCode, courseSection, members } = req.body || {};
+
+        if (!courseTitle || !courseCode || !courseSection) {
+            return res.status(400).json({ message: 'courseTitle, courseCode and courseSection required' });
+        }
+
+        const fileData = fs.readFileSync(courseFile, 'utf-8') || '[]';
+        const courses = JSON.parse(fileData);
+
+        const exists = courses.find(c => c.courseTitle === courseTitle && String(c.courseCode) === String(courseCode) && String(c.courseSection) === String(courseSection));
+        if (exists) {
+            return res.status(409).json({ message: 'Course already exists' });
+        }
+
+        const newCourse = {
+            courseTitle,
+            courseCode,
+            courseSection,
+            members: [],
+        };
 
         courses.push(newCourse);
-        fs.writeFileSync(courseFile, JSON.stringify(courses, null, 2));
+        fs.writeFileSync(courseFile, JSON.stringify(courses, null, 2), 'utf-8');
 
-        return res.status(500).json({ message: "New Course Added" });
+        return res.status(201).json(newCourse);
     } catch (err) {
-        console.log("Error (Adding Course): " + err);
-        return res.status(500).json({ message: "Failed to add Course"});
+        console.error('Error (Create Course):', err);
+        return res.status(500).json({ message: 'Server error' });
     }
 });
 
