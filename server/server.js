@@ -49,27 +49,37 @@ app.post('/api/courses/:courseTitle/:courseCode/:courseSection/members', (req, r
         const title = decodeURIComponent(req.params.courseTitle);
         const code = decodeURIComponent(req.params.courseCode);
         const section = decodeURIComponent(req.params.courseSection);
-        const { firstName = "", lastName = "", role = "" } = req.body || {};
+        const { firstName, lastName, role } = req.body || {};
+
+        if (!firstName || !lastName) {
+            return res.status(400).json({ message: 'firstName and lastName required' });
+        }
+        if (!role || !['Student','TA','Admin'].includes(role)) {
+            return res.status(400).json({ message: 'role required and must be Student, TA, or Admin' });
+        }
 
         const fileData = fs.readFileSync(courseFile, 'utf-8');
         const courses = JSON.parse(fileData || '[]');
-        const index = courses.findIndex(c => 
-            c.courseTitle === title && c.courseCode === code && c.courseSection === section
-        );
-        if (index === -1) return res.status(404).json({ message: "Course Not Found "});
-        const member = {
-            id: genId(),
-            firstName: firstName,
-            lastName: lastName,
-            role: role,
-        }
 
-        courses[index].members.push(member);
+        const course = courses.find(c => c.courseTitle === title && String(c.courseCode) === String(code) && String(c.courseSection) === String(section));
+        if (!course) return res.status(404).json({ message: 'Course not found' });
+
+        const newMember = {
+            id: genId(),
+            firstName,
+            lastName,
+            role
+        };
+
+        course.members = course.members || [];
+        course.members.push(newMember);
+
         fs.writeFileSync(courseFile, JSON.stringify(courses, null, 2), 'utf-8');
-        return res.status(201).json(member);
+
+        return res.status(201).json(newMember);
     } catch (err) {
-        console.log('Error (Adding Member): ' + err);
-        return res.status(500).json({ message: "Failed to Add Member"});
+        console.error('Error (Create Member):', err);
+        return res.status(500).json({ message: 'Server error' });
     }
 });
 

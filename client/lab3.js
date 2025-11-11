@@ -75,6 +75,7 @@ async function fetchCourses() {
         const courses = await res.json();
         courseList.innerHTML = "";
         addMembersCourseList.innerHTML = "";
+        courseCodeSelect.innerHTML = "";
 
         courseList.appendChild(document.createElement('option'));
         addMembersCourseList.appendChild(document.createElement('option'));
@@ -118,6 +119,9 @@ async function editSelected() {
         }
     }
 
+    const oldPanel = document.getElementById('editPanel');
+    if (oldPanel) oldPanel.remove();
+
     const br = document.createElement('br');
     const panel = document.createElement('div');
         panel.id = 'editPanel';
@@ -153,6 +157,21 @@ async function saveCourseEdit() {
     let newTitle = document.getElementById('editcoursetitle').value;
     let newCode = document.getElementById('editcoursecode').value;
     let newSection = document.getElementById('editcoursesection').value;
+
+    const codeRegex = /^(?:[1-9]|[1-9][0-9]|[1-9][0-9]{2}|[1-9][0-9]{3})$/;
+    const titleRegex = /^.{0,100}$/;
+    const sectionRegex = /^([1-9]|[1-9][0-9])$/;
+    if (cTitle.value == "" || newCode.value == "") return;
+    if (!titleRegex.test(newTitle.value)) {
+        alert("Must be 100 characters or less.");
+        return;
+    } else if (!codeRegex.test(newCode.value)) {
+        alert("Must be a number from 1-9999.");
+        return;
+    } else if (!sectionRegex.test(newSection.value)) {
+        alert("Must be a number from 1-99.");
+        return;
+    }
 
     const resList = await fetch('/api/courses');
     const courses = await resList.json();
@@ -197,6 +216,10 @@ async function deleteEditedCourse() {
 }
 
 async function addMemberMenu() {
+    const oldPanel = document.getElementById('memberspanel');
+    if (oldPanel) oldPanel.remove();
+
+
     const panel = document.createElement('div');
         panel.id = 'memberspanel';
 
@@ -210,6 +233,15 @@ async function addMemberMenu() {
     const memberLastName = document.createElement('input');
         memberLastName.id = 'memberlastname';
         memberLastName.placeholder = 'Last Name'
+    const roleSelect = document.createElement('select');
+        roleSelect.id = 'memberrole';
+        roleSelect.appendChild(document.createElement('option')); // empty
+        ['Student','TA','Admin'].forEach(r => {
+            const o = document.createElement('option');
+            o.value = r;
+            o.textContent = r;
+            roleSelect.appendChild(o);
+        });
     const addMemberButton = document.createElement('button');
         addMemberButton.id = 'addmember';
         addMemberButton.textContent = 'Add'
@@ -235,12 +267,12 @@ async function addMemberMenu() {
         course.members.forEach(m => {
             const listItem = document.createElement('li');
             listItem.id = "m." + m.id;
-                listItem.textContent = `${m.firstName} ${m.lastName}: ${m.id}`;
+                listItem.textContent = `${m.firstName} ${m.lastName}: ${m.id} (${m.role || 'Student'})`;
             memberList.appendChild(listItem);
         });
 
 
-    panel.append(memberFirstName, memberLastName, addMemberButton, document.createElement('br'), removeMemberDropdown, removeMemberButton,
+    panel.append(memberFirstName, memberLastName, roleSelect, addMemberButton, document.createElement('br'), removeMemberDropdown, removeMemberButton,
                  document.createElement('br'), currentMembersLabel, memberList);
     memberSheet.appendChild(panel);
 }
@@ -248,7 +280,8 @@ async function addMemberMenu() {
 async function onAddMember() {
     let firstName = document.getElementById('memberfirstname').value;
     let lastName = document.getElementById('memberlastname').value;
-    let role = "Student";
+    let roleEl = document.getElementById('memberrole');
+    let role = roleEl ? roleEl.value : '';
 
     const resList = await fetch('/api/courses');
     const courses = await resList.json();
@@ -256,6 +289,11 @@ async function onAddMember() {
 
     if (!firstName || !lastName) {
         alert("Input First and Last Name");
+        return;
+    }
+
+    if (!role || !['Student','TA','Admin'].includes(role)) {
+        alert('Choose a role: Student, TA, or Admin.');
         return;
     }
 
@@ -338,6 +376,11 @@ async function addSheets() {
     const start = document.getElementById('sheetstartdate');
     const end = document.getElementById('sheetenddate');
 
+    const assignmentNameRegex = /^.{1,100}$/;
+    if (!assignmentNameRegex.test(assnName.value)) {
+        alert("Assignment name must be 1-100 characters.");
+        return;
+    }
 
     const sheet = {
         assignmentName: assnName.value,
