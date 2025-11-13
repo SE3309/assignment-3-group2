@@ -6,10 +6,19 @@ const port = 3000;
 
 app.use(express.json());
 
+const DATA_DIR   = path.join(__dirname, 'data');
+const CLIENT_DIR = path.join(__dirname, '..', 'client');
+const BASE       = '/lab3-ssalib2';
+
 const courseFile = path.join(__dirname, 'data', 'courseInfo.json');
 const sheetsFile = path.join(__dirname, 'data', 'sheets.json');
 
-// Generates unique IDs so that I don't have to try syphoning through each course and sift to see if something is unique or not.
+app.use(BASE, express.static(CLIENT_DIR));
+app.get([BASE, `${BASE}/`], (req, res) => {
+  res.sendFile(path.join(CLIENT_DIR, 'index.html'));
+});
+app.use(`${BASE}/data`, express.static(DATA_DIR));
+
 function genId() {
   return `m_${Date.now()}_${Math.random().toString(16).slice(2,5)}`;
 }
