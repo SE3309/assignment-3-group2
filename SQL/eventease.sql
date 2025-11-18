@@ -139,3 +139,4 @@ CREATE TABLE Report (
     FOREIGN KEY (EventID) REFERENCES Event(EventID),
     FOREIGN KEY (UserID) REFERENCES User(UserID)
 );
+
