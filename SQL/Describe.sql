@@ -1,0 +1,10 @@
+DESCRIBE PostalArea;
+DESCRIBE User;
+DESCRIBE Administrator;
+DESCRIBE Event;
+DESCRIBE Wishlist;
+DESCRIBE Ticket;
+DESCRIBE Payment;
+DESCRIBE DiscussionBoard;
+DESCRIBE Reply;
+DESCRIBE Report;
