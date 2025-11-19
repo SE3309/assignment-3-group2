@@ -44,3 +44,25 @@ SELECT r1.ReplyID AS ChildReply,
 FROM reply r1
 JOIN reply r2 ON r1.ParentReplyID = r2.ReplyID
 LIMIT 5;
+
+SELECT e.EventID, e.Title, COUNT(t.TicketID) AS TicketsSold
+FROM event e
+JOIN ticket t ON e.EventID = t.EventID
+GROUP BY e.EventID, e.Title
+HAVING COUNT(t.TicketID) > 5
+LIMIT 5;
+
+SELECT u.UserID, u.Username, u.Email
+FROM user u
+WHERE u.UserID IN (
+    SELECT r.UserID
+    FROM reply r
+    WHERE EXISTS (
+        SELECT 1
+        FROM discussionboard d
+        JOIN ticket t ON d.EventID = t.EventID
+        WHERE d.DiscussionID = r.DiscussionID
+          AND t.UserID = r.UserID
+    )
+)
+LIMIT 5;

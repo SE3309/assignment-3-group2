@@ -18,3 +18,24 @@ SELECT
 FROM administrator
 WHERE Username = 'adminJohn';
 
+INSERT INTO administrator (Username, Email, Password, PhoneNumber, Role)
+SELECT 
+    'regionalAdmin',
+    'regional.admin@example.com',
+    'regionpass',
+    '416-222-3333',
+    Role
+FROM administrator
+WHERE Role = 'Supervisor'
+LIMIT 1;
+
+INSERT INTO administrator (Username, Email, Password, PhoneNumber, Role)
+SELECT 
+    'assistantAdmin',
+    'assistant.admin@example.com',
+    'assistpass',
+    PhoneNumber,
+    'Assistant'
+FROM administrator
+ORDER BY AdminID
+LIMIT 1;
